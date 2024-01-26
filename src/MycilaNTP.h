@@ -8,6 +8,11 @@
 #include <WString.h>
 #include <functional>
 
+#define MYCILA_NTP_VERSION "1.0.0"
+#define MYCILA_NTP_VERSION_MAJOR 1
+#define MYCILA_NTP_VERSION_MINOR 0
+#define MYCILA_NTP_VERSION_REVISION 0
+
 #ifndef MYCILA_NTP_RETRY_INTERVAL
 #define MYCILA_NTP_RETRY_INTERVAL 2
 #endif
