@@ -74,7 +74,7 @@ jobs:
         run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/NTP/NTP.ino"
 
       - name: Build NTPJson
-        run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/NTPJson/NTPJson.ino" ---build-property build.extra_flags=-DMYCILA_NTP_JSON_SUPPORT
+        run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/NTPJson/NTPJson.ino" --build-property build.extra_flags=-DMYCILA_NTP_JSON_SUPPORT
 
   platformio:
     name: PlatformIO
