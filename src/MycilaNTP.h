@@ -8,6 +8,10 @@
 #include <WString.h>
 #include <functional>
 
+#ifdef MYCILA_NTP_JSON_SUPPORT
+#include <ArduinoJson.h>
+#endif
+
 #define MYCILA_NTP_VERSION "1.0.0"
 #define MYCILA_NTP_VERSION_MAJOR 1
 #define MYCILA_NTP_VERSION_MINOR 0
@@ -33,6 +37,10 @@ namespace Mycila {
 
       // true when time is synced, never changes after
       bool isSynced() const { return _synced; }
+
+#ifdef MYCILA_NTP_JSON_SUPPORT
+      void timezonesToJson(const JsonObject& doc) const;
+#endif
 
     private:
       volatile bool _synced = false;

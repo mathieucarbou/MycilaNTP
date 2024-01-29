@@ -60,6 +60,22 @@ bool Mycila::NTPClass::update(const timeval* tv) {
   return false;
 }
 
+#ifdef MYCILA_NTP_JSON_SUPPORT
+void Mycila::NTPClass::timezonesToJson(const JsonObject& doc) const {
+  char* start = const_cast<char*>(MYCILA_NTP_SPEC);
+  char* token = strstr(start, "=");
+  while (token != nullptr) {
+    const String timezone = String(start, static_cast<size_t>(token - start));
+    start = token + 1;
+    token = strstr(start, "\n");
+    const String spec = String(start, static_cast<size_t>(token - start));
+    start = token + 1;
+    token = strstr(start, "=");
+    doc[timezone] = spec;
+  }
+}
+#endif
+
 namespace Mycila {
   NTPClass NTP;
 } // namespace Mycila

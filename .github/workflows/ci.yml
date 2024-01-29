@@ -67,8 +67,14 @@ jobs:
       - name: Install core
         run: arduino-cli core install --additional-urls "${{ matrix.index_url }}" ${{ matrix.core }}
 
+      - name: Install ArduinoJson
+        run: arduino-cli lib install ArduinoJson
+
       - name: Build NTP
         run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/NTP/NTP.ino"
+
+      - name: Build NTPJson
+        run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/NTPJson/NTPJson.ino" ---build-property build.extra_flags=-DMYCILA_NTP_JSON_SUPPORT
 
   platformio:
     name: PlatformIO
@@ -108,3 +114,6 @@ jobs:
 
       - name: Build NTP
         run: platformio ci "examples/NTP/NTP.ino" -l '.' -b ${{ matrix.board }}
+
+      - name: Build NTPJson
+        run: PLATFORMIO_BUILD_FLAGS="-Wall -Wextra -DMYCILA_NTP_JSON_SUPPORT" platformio ci "examples/NTPJson/NTPJson.ino" -l '.' --project-option="lib_deps=ArduinoJson" -b ${{ matrix.board }}
