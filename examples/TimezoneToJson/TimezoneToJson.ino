@@ -13,7 +13,16 @@ void setup() {
   uint32_t start = ESP.getFreeHeap();
 
   JsonDocument doc;
-  Mycila::NTP.timezonesToJson(doc.to<JsonObject>());
+
+  Mycila::NTP.timezonesToJsonObject(doc.to<JsonObject>());
+  serializeJsonPretty(doc, Serial);
+  Serial.println();
+
+  Serial.print("Heap used: ");
+  Serial.print(start - ESP.getFreeHeap());
+  Serial.println(" bytes");
+
+  Mycila::NTP.timezonesToJsonArray(doc.to<JsonArray>());
   serializeJsonPretty(doc, Serial);
   Serial.println();
 

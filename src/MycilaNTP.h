@@ -40,7 +40,10 @@ namespace Mycila {
       bool isSynced() const { return _synced; }
 
 #ifdef MYCILA_NTP_JSON_SUPPORT
-      void timezonesToJson(const JsonObject& doc) const;
+      // map of timezone names and timezone info
+      void timezonesToJsonObject(const JsonObject& doc) const;
+      // list of timezone names
+      void timezonesToJsonArray(const JsonArray& doc) const;
 #endif
 
     private:

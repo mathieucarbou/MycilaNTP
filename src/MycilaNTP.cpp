@@ -82,7 +82,7 @@ bool Mycila::NTPClass::sync(const timeval* tv) {
 }
 
 #ifdef MYCILA_NTP_JSON_SUPPORT
-void Mycila::NTPClass::timezonesToJson(const JsonObject& doc) const {
+void Mycila::NTPClass::timezonesToJsonObject(const JsonObject& doc) const {
   char* start = const_cast<char*>(MYCILA_NTP_SPEC);
   char* token = strstr(start, "=");
   while (token != nullptr) {
@@ -93,6 +93,17 @@ void Mycila::NTPClass::timezonesToJson(const JsonObject& doc) const {
     start = token + 1;
     token = strstr(start, "=");
     doc[timezone] = spec;
+  }
+}
+
+void Mycila::NTPClass::timezonesToJsonArray(const JsonArray& doc) const {
+  char* start = const_cast<char*>(MYCILA_NTP_SPEC);
+  char* token = strstr(start, "=");
+  while (token != nullptr) {
+    doc.add(String(start, static_cast<size_t>(token - start)));
+    token = strstr(token + 1, "\n");
+    start = token + 1;
+    token = strstr(start, "=");
   }
 }
 #endif
