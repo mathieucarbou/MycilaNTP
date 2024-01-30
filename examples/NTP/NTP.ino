@@ -1,6 +1,6 @@
-#include <MycilaNTP.h>
-
+#include <Arduino.h>
 #include <HardwareSerial.h>
+#include <MycilaNTP.h>
 #include <WiFi.h>
 
 void setup() {
@@ -8,8 +8,7 @@ void setup() {
   while (!Serial)
     continue;
 
-  Mycila::NTP.setTimezone("Europe/Paris");
-  Mycila::NTP.setNTPServer("pool.ntp.org");
+  Mycila::NTP.begin("Europe/Paris", "pool.ntp.org");
 
   Serial.println(Mycila::NTP.getTimezoneInfo());
 
@@ -18,5 +17,8 @@ void setup() {
 
 void loop() {
   Serial.println(Mycila::NTP.isSynced());
+  struct tm timeInfo;
+  if (getLocalTime(&timeInfo))
+    Serial.println(&timeInfo, "%A, %B %d %Y %H:%M:%S");
   delay(1000);
 }

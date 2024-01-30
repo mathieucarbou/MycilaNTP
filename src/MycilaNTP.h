@@ -24,10 +24,8 @@
 namespace Mycila {
   class NTPClass {
     public:
-      void setNTPServer(const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
-
-      // set timezone, returns false if empty or invalid
-      bool setTimezone(const String& timezone);
+      // returns false if server or timezone  invalid
+      bool begin(const String& timezone, const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
 
       // ge the timezone information used
       const String& getTimezoneInfo() const { return _spec; }
