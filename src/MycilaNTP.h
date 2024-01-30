@@ -24,14 +24,17 @@
 namespace Mycila {
   class NTPClass {
     public:
-      // returns false if server or timezone  invalid
-      bool begin(const String& timezone, const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
+      // returns false if timezone  invalid
+      bool setTimeZone(const String& timezone);
 
       // ge the timezone information used
       const String& getTimezoneInfo() const { return _spec; }
 
-      // trigger a time request, eventually by setting a time (fro ma browser)
-      bool update(const timeval* tv = nullptr);
+      // sync with server
+      bool sync(const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
+
+      // manually sync
+      bool sync(const timeval* tv);
 
       // true when time is synced, never changes after
       bool isSynced() const { return _synced; }

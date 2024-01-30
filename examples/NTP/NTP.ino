@@ -8,7 +8,8 @@ void setup() {
   while (!Serial)
     continue;
 
-  Mycila::NTP.begin("Europe/Paris", "pool.ntp.org");
+  Mycila::NTP.setTimeZone("Europe/Paris");
+  Mycila::NTP.sync("pool.ntp.org");
 
   Serial.println(Mycila::NTP.getTimezoneInfo());
 

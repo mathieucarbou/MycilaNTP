@@ -7,10 +7,7 @@
 
 #include <Arduino.h>
 
-bool Mycila::NTPClass::begin(const String& timezone, const String& server, const uint8_t retryInterval) {
-  if (server.isEmpty())
-    return false;
-
+bool Mycila::NTPClass::setTimeZone(const String& timezone) {
   if (timezone.isEmpty())
     return false;
 
@@ -20,38 +17,57 @@ bool Mycila::NTPClass::begin(const String& timezone, const String& server, const
 
   const char* start = found + timezone.length() + 1;
   _spec = String(start, static_cast<unsigned int>(strstr(start, "\n") - start));
-  _server = server;
-  _synced = false;
-  _ticker.detach();
 
-  configTime(0, 0, _server.c_str());
   setenv("TZ", _spec.c_str(), 1);
   tzset();
-
-  _ticker.attach(
-    retryInterval, +[](NTPClass* instance) {
-      // Serial.println("NTP Tick");
-      if (!instance->_synced) {
-        struct tm timeInfo;
-        if (getLocalTime(&timeInfo, 5)) {
-          instance->_synced = true;
-          instance->_ticker.detach();
-        }
-      } else {
-        instance->_ticker.detach();
-      }
-    },
-    this);
 
   return true;
 }
 
-bool Mycila::NTPClass::update(const timeval* tv) {
-  if (_spec.isEmpty())
+bool Mycila::NTPClass::sync(const String& server, const uint8_t retryInterval) {
+  if (server.isEmpty())
     return false;
 
-  if (tv) {
-    settimeofday(tv, nullptr);
+  _server = server;
+  _ticker.detach();
+
+  configTime(0, 0, _server.c_str());
+  if (!_spec.isEmpty()) {
+    setenv("TZ", _spec.c_str(), 1);
+    tzset();
+  }
+
+  struct tm timeInfo;
+  getLocalTime(&timeInfo, 5);
+
+  if (!_synced) {
+    _ticker.attach(
+      retryInterval, +[](NTPClass* instance) {
+        // Serial.println("NTP Tick");
+        if (!instance->_synced) {
+          struct tm timeInfo;
+          if (getLocalTime(&timeInfo, 5)) {
+            instance->_synced = true;
+            instance->_ticker.detach();
+          }
+        } else {
+          instance->_ticker.detach();
+        }
+      },
+      this);
+  }
+
+  return true;
+}
+
+bool Mycila::NTPClass::sync(const timeval* tv) {
+  if (!tv)
+    return false;
+
+  _ticker.detach();
+
+  settimeofday(tv, nullptr);
+  if (!_spec.isEmpty()) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();
   }
@@ -59,7 +75,6 @@ bool Mycila::NTPClass::update(const timeval* tv) {
   struct tm timeInfo;
   if (getLocalTime(&timeInfo, 5)) {
     _synced = true;
-    _ticker.detach();
     return true;
   }
 
