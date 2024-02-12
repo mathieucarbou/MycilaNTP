@@ -468,4 +468,3 @@ static const char MYCILA_NTP_SPEC[] PROGMEM = {
   "Pacific/Tongatapu=<+13>-13\n"
   "Pacific/Wake=<+12>-12\n"
   "Pacific/Wallis=<+12>-12"};
-  
