@@ -6,6 +6,7 @@
 #include <MycilaNTPSpecs.h>
 
 #include <Arduino.h>
+#include <sys/time.h>
 
 bool Mycila::NTPClass::setTimeZone(const String& timezone) {
   if (timezone.isEmpty())
