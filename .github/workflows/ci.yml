@@ -78,7 +78,7 @@ jobs:
         run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/TimezoneToJson/TimezoneToJson.ino" --build-property build.extra_flags=-DMYCILA_NTP_JSON_SUPPORT
 
   platformio:
-    name: PlatformIO
+    name: pio ${{ matrix.name }}
     needs: cpplint
     runs-on: ubuntu-latest
     strategy:
