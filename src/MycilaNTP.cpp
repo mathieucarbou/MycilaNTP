@@ -61,13 +61,10 @@ bool Mycila::NTPClass::sync(const String& server, const uint8_t retryInterval) {
   return true;
 }
 
-bool Mycila::NTPClass::sync(const timeval* tv) {
-  if (!tv)
-    return false;
-
+bool Mycila::NTPClass::sync(const timeval& tv) {
   _ticker.detach();
 
-  settimeofday(tv, nullptr);
+  settimeofday(&tv, nullptr);
   if (!_spec.isEmpty()) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();

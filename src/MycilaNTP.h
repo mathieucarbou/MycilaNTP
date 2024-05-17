@@ -34,7 +34,7 @@ namespace Mycila {
       bool sync(const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
 
       // manually sync
-      bool sync(const timeval* tv);
+      bool sync(const timeval& tv);
 
       // true when time is synced, never changes after
       bool isSynced() const { return _synced; }

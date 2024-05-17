@@ -21,3 +21,10 @@ Then query state:
 Mycila::NTP.isSynced();
 Mycila::NTP.getTimezoneInfo();
 ```
+
+A=It is also possible to manually sync the time:
+
+```c++
+const timeval tv = {sec, millis};
+Mycila::NTP.sync(tv);
+```
