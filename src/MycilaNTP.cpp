@@ -8,16 +8,37 @@
 #include <Arduino.h>
 #include <sys/time.h>
 
+#ifdef MYCILA_LOGGER_SUPPORT
+#include <MycilaLogger.h>
+extern Mycila::Logger logger;
+#define LOGD(tag, format, ...) logger.debug(tag, format, ##__VA_ARGS__)
+#define LOGI(tag, format, ...) logger.info(tag, format, ##__VA_ARGS__)
+#define LOGW(tag, format, ...) logger.warn(tag, format, ##__VA_ARGS__)
+#define LOGE(tag, format, ...) logger.error(tag, format, ##__VA_ARGS__)
+#else
+#define LOGD(tag, format, ...) ESP_LOGD(tag, format, ##__VA_ARGS__)
+#define LOGI(tag, format, ...) ESP_LOGI(tag, format, ##__VA_ARGS__)
+#define LOGW(tag, format, ...) ESP_LOGW(tag, format, ##__VA_ARGS__)
+#define LOGE(tag, format, ...) ESP_LOGE(tag, format, ##__VA_ARGS__)
+#endif
+
+#define TAG "NTP"
+
 bool Mycila::NTPClass::setTimeZone(const String& timezone) {
-  if (timezone.isEmpty())
+  if (timezone.isEmpty()) {
     return false;
+  }
 
   char* found = strstr(MYCILA_NTP_SPEC, (timezone + "=").c_str());
-  if (found == nullptr)
+  if (found == nullptr) {
+    LOGE(TAG, "Timezone not found: %s", timezone.c_str());
     return false;
+  }
 
   const char* start = found + timezone.length() + 1;
   _spec = String(start, static_cast<unsigned int>(strstr(start, "\n") - start));
+
+  LOGI(TAG, "Set timezone to %s (%s)", timezone.c_str(), _spec.c_str());
 
   setenv("TZ", _spec.c_str(), 1);
   tzset();
@@ -26,8 +47,9 @@ bool Mycila::NTPClass::setTimeZone(const String& timezone) {
 }
 
 bool Mycila::NTPClass::sync(const String& server, const uint8_t retryInterval) {
-  if (server.isEmpty())
+  if (server.isEmpty()) {
     return false;
+  }
 
   _server = server;
   _ticker.detach();
@@ -42,6 +64,7 @@ bool Mycila::NTPClass::sync(const String& server, const uint8_t retryInterval) {
   getLocalTime(&timeInfo, 5);
 
   if (!_synced) {
+    LOGI(TAG, "Syncing time with %s", _server.c_str());
     _ticker.attach(
       retryInterval, +[](NTPClass* instance) {
         // Serial.println("NTP Tick");
@@ -69,6 +92,8 @@ bool Mycila::NTPClass::sync(const timeval& tv) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();
   }
+
+  LOGI(TAG, "Time synced manually");
 
   struct tm timeInfo;
   if (getLocalTime(&timeInfo, 5)) {
