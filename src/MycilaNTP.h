@@ -8,7 +8,7 @@
 #include <WString.h>
 #include <functional>
 
-#ifdef MYCILA_NTP_JSON_SUPPORT
+#ifdef MYCILA_JSON_SUPPORT
 #include <ArduinoJson.h>
 #endif
 
@@ -39,7 +39,7 @@ namespace Mycila {
       // true when time is synced, never changes after
       bool isSynced() const { return _synced; }
 
-#ifdef MYCILA_NTP_JSON_SUPPORT
+#ifdef MYCILA_JSON_SUPPORT
       // map of timezone names and timezone info
       void timezonesToJsonObject(const JsonObject& doc) const;
       // list of timezone names

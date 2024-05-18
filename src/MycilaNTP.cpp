@@ -79,7 +79,7 @@ bool Mycila::NTPClass::sync(const timeval& tv) {
   return false;
 }
 
-#ifdef MYCILA_NTP_JSON_SUPPORT
+#ifdef MYCILA_JSON_SUPPORT
 void Mycila::NTPClass::timezonesToJsonObject(const JsonObject& doc) const {
   char* start = const_cast<char*>(MYCILA_NTP_SPEC);
   char* token = strstr(start, "=");
