@@ -89,9 +89,9 @@ jobs:
             board: esp32dev
             platform: espressif32
             opts:
-          - name: esp32dev|espressif32@6.7.0
+          - name: esp32dev|espressif32@6.8.1
             board: esp32dev
-            platform: espressif32@6.7.0
+            platform: espressif32@6.8.1
             opts:
           - name: esp32dev|arduino@3
             board: esp32dev
@@ -105,9 +105,9 @@ jobs:
             board: esp32-s3-devkitc-1
             platform: espressif32
             opts:
-          - name: esp32-s3-devkitc-1|espressif32@6.7.0
+          - name: esp32-s3-devkitc-1|espressif32@6.8.1
             board: esp32-s3-devkitc-1
-            platform: espressif32@6.7.0
+            platform: espressif32@6.8.1
             opts:
           - name: esp32-s3-devkitc-1|arduino@3
             board: esp32-s3-devkitc-1
