@@ -78,63 +78,75 @@ jobs:
         run: arduino-cli compile --library . --warnings all -b ${{ matrix.board }} "examples/TimezoneToJson/TimezoneToJson.ino" --build-property build.extra_flags=-DMYCILA_JSON_SUPPORT
 
   platformio:
-    name: pio ${{ matrix.name }}
-    needs: cpplint
+    name: "pio:${{ matrix.env }}:${{ matrix.board }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: esp32dev|espressif32
+          - env: ci-arduino-2
             board: esp32dev
-            platform: espressif32
-            opts:
-          - name: esp32dev|espressif32@6.8.1
-            board: esp32dev
-            platform: espressif32@6.8.1
-            opts:
-          - name: esp32dev|arduino@3
-            board: esp32dev
-            platform: espressif32
-            opts: "--project-option 'platform_packages=platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#3.0.4, platform_packages=platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/arduino-esp32/releases/download/3.0.4/esp32-arduino-libs-3.0.4.zip'"
-          - name: esp32dev|arduino@master
-            board: esp32dev
-            platform: espressif32
-            opts: "--project-option 'platform_packages=platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#master, platform_packages=platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/arduino-esp32/releases/download/3.0.4/esp32-arduino-libs-3.0.4.zip'"
-          - name: esp32-s3-devkitc-1|espressif32
+          - env: ci-arduino-2
+            board: esp32-s2-saola-1
+          - env: ci-arduino-2
             board: esp32-s3-devkitc-1
-            platform: espressif32
-            opts:
-          - name: esp32-s3-devkitc-1|espressif32@6.8.1
-            board: esp32-s3-devkitc-1
-            platform: espressif32@6.8.1
-            opts:
-          - name: esp32-s3-devkitc-1|arduino@3
-            board: esp32-s3-devkitc-1
-            platform: espressif32
-            opts: "--project-option 'platform_packages=platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#3.0.4, platform_packages=platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/arduino-esp32/releases/download/3.0.4/esp32-arduino-libs-3.0.4.zip'"
-          - name: esp32-s3-devkitc-1|arduino@master
-            board: esp32-s3-devkitc-1
-            platform: espressif32
-            opts: "--project-option 'platform_packages=platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#master, platform_packages=platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/arduino-esp32/releases/download/3.0.4/esp32-arduino-libs-3.0.4.zip'"
+          - env: ci-arduino-2
+            board: esp32-c3-devkitc-02
 
+          - env: ci-arduino-3
+            board: esp32dev
+          - env: ci-arduino-3
+            board: esp32-s2-saola-1
+          - env: ci-arduino-3
+            board: esp32-s3-devkitc-1
+          - env: ci-arduino-3
+            board: esp32-c3-devkitc-02
+          - env: ci-arduino-3
+            board: esp32-c6-devkitc-1
+          - env: ci-arduino-3
+            board: esp32-h2-devkitm-1
+
+          - env: ci-arduino-310rc1
+            board: esp32dev
+          - env: ci-arduino-310rc1
+            board: esp32-s2-saola-1
+          - env: ci-arduino-310rc1
+            board: esp32-s3-devkitc-1
+          - env: ci-arduino-310rc1
+            board: esp32-c3-devkitc-02
+          - env: ci-arduino-310rc1
+            board: esp32-c6-devkitc-1
+          - env: ci-arduino-310rc1
+            board: esp32-h2-devkitm-1
+
+          - env: ci-esp8266
+            board: huzzah
+          - env: ci-esp8266
+            board: d1_mini
+
+          - env: ci-raspberrypi
+            board: rpipicow
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up cache
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache PlatformIO
         uses: actions/cache@v4
         with:
+          key: ${{ runner.os }}-pio
           path: |
-            ~/.platformio
             ~/.cache/pip
-          key: ${{ matrix.name }}
-      - uses: actions/setup-python@v5
+            ~/.platformio
+
+      - name: Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - run: pip install platformio
-      - run: platformio platform install ${{ matrix.platform }}
 
-      - name: Build NTP
-        run: platformio ci "examples/NTP/NTP.ino" -l '.' -b ${{ matrix.board }} ${{ matrix.opts }}
-
-      - name: Build TimezoneToJson
-        run: PLATFORMIO_BUILD_FLAGS="-DMYCILA_JSON_SUPPORT" platformio ci "examples/TimezoneToJson/TimezoneToJson.ino" -l '.' --project-option="lib_deps=ArduinoJson" -b ${{ matrix.board }} ${{ matrix.opts }}
+      - name: Build
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+      
+      - run: PLATFORMIO_SRC_DIR=examples/NTP PIO_BOARD=${{ matrix.board }} pio run -e ${{ matrix.env }}
+      - run: PLATFORMIO_BUILD_FLAGS="-DMYCILA_JSON_SUPPORT" PLATFORMIO_SRC_DIR=examples/TimezoneToJson PIO_BOARD=${{ matrix.board }} pio run -e ${{ matrix.env }}
