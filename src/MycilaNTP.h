@@ -6,6 +6,8 @@
 
 #include <Ticker.h>
 #include <WString.h>
+#include <time.h>
+
 #include <functional>
 
 #ifdef MYCILA_JSON_SUPPORT
