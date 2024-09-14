@@ -24,21 +24,31 @@ extern Mycila::Logger logger;
 
 #define TAG "NTP"
 
-bool Mycila::NTPClass::setTimeZone(const String& timezone) {
-  if (timezone.isEmpty()) {
+bool Mycila::NTPClass::setTimeZone(const char* timezone) {
+  if (!timezone)
     return false;
-  }
 
-  char* found = strstr(MYCILA_NTP_SPEC, (timezone + "=").c_str());
+  size_t len = strlen(timezone);
+  if (len == 0)
+    return false;
+
+  char* withEqual = new char[len + 2];
+  memcpy(withEqual, timezone, len);
+  withEqual[len] = '=';
+  withEqual[len + 1] = '\0';
+
+  char* found = strstr(MYCILA_NTP_SPEC, withEqual);
+  delete[] withEqual;
+
   if (found == nullptr) {
-    LOGE(TAG, "Timezone not found: %s", timezone.c_str());
+    LOGE(TAG, "Timezone not found: %s", timezone);
     return false;
   }
 
-  const char* start = found + timezone.length() + 1;
+  const char* start = found + len + 1;
   _spec = String(start, static_cast<unsigned int>(strstr(start, "\n") - start));
 
-  LOGI(TAG, "Set timezone to %s (%s)", timezone.c_str(), _spec.c_str());
+  LOGI(TAG, "Set timezone to %s (%s)", timezone, _spec.c_str());
 
   setenv("TZ", _spec.c_str(), 1);
   tzset();
@@ -46,10 +56,9 @@ bool Mycila::NTPClass::setTimeZone(const String& timezone) {
   return true;
 }
 
-bool Mycila::NTPClass::sync(const String& server, const uint8_t retryInterval) {
-  if (server.isEmpty()) {
+bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
+  if (!server || strlen(server) == 0)
     return false;
-  }
 
   _server = server;
   _ticker.detach();

@@ -17,9 +17,9 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(Mycila::NTP.isSynced());
   struct tm timeInfo;
   if (getLocalTime(&timeInfo))
     Serial.println(&timeInfo, "%A, %B %d %Y %H:%M:%S");
+  Serial.println(Mycila::NTP.isSynced());
   delay(1000);
 }

@@ -27,13 +27,13 @@ namespace Mycila {
   class NTPClass {
     public:
       // returns false if timezone  invalid
-      bool setTimeZone(const String& timezone);
+      bool setTimeZone(const char* timezone);
 
       // ge the timezone information used
       const String& getTimezoneInfo() const { return _spec; }
 
       // sync with server
-      bool sync(const String& server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
+      bool sync(const char* server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
 
       // manually sync
       bool sync(const timeval& tv);
