@@ -11,16 +11,16 @@
 #include <functional>
 
 #ifdef MYCILA_JSON_SUPPORT
-#include <ArduinoJson.h>
+  #include <ArduinoJson.h>
 #endif
 
-#define MYCILA_NTP_VERSION "5.0.0"
-#define MYCILA_NTP_VERSION_MAJOR 5
-#define MYCILA_NTP_VERSION_MINOR 0
+#define MYCILA_NTP_VERSION          "5.0.0"
+#define MYCILA_NTP_VERSION_MAJOR    5
+#define MYCILA_NTP_VERSION_MINOR    0
 #define MYCILA_NTP_VERSION_REVISION 0
 
 #ifndef MYCILA_NTP_RETRY_INTERVAL
-#define MYCILA_NTP_RETRY_INTERVAL 2
+  #define MYCILA_NTP_RETRY_INTERVAL 2
 #endif
 
 namespace Mycila {

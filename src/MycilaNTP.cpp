@@ -8,18 +8,22 @@
 #include <Arduino.h>
 #include <sys/time.h>
 
+#ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
+  #include "lwip/priv/tcpip_priv.h"
+#endif
+
 #ifdef MYCILA_LOGGER_SUPPORT
-#include <MycilaLogger.h>
+  #include <MycilaLogger.h>
 extern Mycila::Logger logger;
-#define LOGD(tag, format, ...) logger.debug(tag, format, ##__VA_ARGS__)
-#define LOGI(tag, format, ...) logger.info(tag, format, ##__VA_ARGS__)
-#define LOGW(tag, format, ...) logger.warn(tag, format, ##__VA_ARGS__)
-#define LOGE(tag, format, ...) logger.error(tag, format, ##__VA_ARGS__)
+  #define LOGD(tag, format, ...) logger.debug(tag, format, ##__VA_ARGS__)
+  #define LOGI(tag, format, ...) logger.info(tag, format, ##__VA_ARGS__)
+  #define LOGW(tag, format, ...) logger.warn(tag, format, ##__VA_ARGS__)
+  #define LOGE(tag, format, ...) logger.error(tag, format, ##__VA_ARGS__)
 #else
-#define LOGD(tag, format, ...) ESP_LOGD(tag, format, ##__VA_ARGS__)
-#define LOGI(tag, format, ...) ESP_LOGI(tag, format, ##__VA_ARGS__)
-#define LOGW(tag, format, ...) ESP_LOGW(tag, format, ##__VA_ARGS__)
-#define LOGE(tag, format, ...) ESP_LOGE(tag, format, ##__VA_ARGS__)
+  #define LOGD(tag, format, ...) ESP_LOGD(tag, format, ##__VA_ARGS__)
+  #define LOGI(tag, format, ...) ESP_LOGI(tag, format, ##__VA_ARGS__)
+  #define LOGW(tag, format, ...) ESP_LOGW(tag, format, ##__VA_ARGS__)
+  #define LOGE(tag, format, ...) ESP_LOGE(tag, format, ##__VA_ARGS__)
 #endif
 
 #define TAG "NTP"
@@ -63,7 +67,18 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   _server = server;
   _ticker.detach();
 
+#ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
+  if (!sys_thread_tcpip(LWIP_CORE_LOCK_QUERY_HOLDER))
+    LOCK_TCPIP_CORE();
+#endif
+
   configTime(0, 0, _server.c_str());
+
+#ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
+  if (sys_thread_tcpip(LWIP_CORE_LOCK_QUERY_HOLDER))
+    UNLOCK_TCPIP_CORE();
+#endif
+
   if (!_spec.isEmpty()) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();
@@ -75,7 +90,8 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   if (!_synced) {
     LOGI(TAG, "Syncing time with %s", _server.c_str());
     _ticker.attach(
-      retryInterval, +[](NTPClass* instance) {
+      retryInterval,
+      +[](NTPClass* instance) {
         // Serial.println("NTP Tick");
         if (!instance->_synced) {
           struct tm timeInfo;
