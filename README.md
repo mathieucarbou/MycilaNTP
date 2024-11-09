@@ -17,8 +17,8 @@ A simple and efficient NTP library for ESP32 / Arduino
 Setup:
 
 ```c++
-Mycila::NTP.setTimezone("Europe/Paris")
-Mycila::NTP.setNTPServer("pool.ntp.org")
+Mycila::NTP.setTimeZone("Europe/Paris");
+Mycila::NTP.sync("pool.ntp.org");
 ```
 
 Then query state:
