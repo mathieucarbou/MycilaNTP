@@ -6,9 +6,11 @@
 #include <MycilaNTPSpecs.h>
 
 #include <Arduino.h>
-#include <sys/time.h>
-#include "lwip/apps/sntp.h"
+
 #include <esp_netif.h>
+#include <sys/time.h>
+
+#include "lwip/apps/sntp.h"
 
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   #include "lwip/priv/tcpip_priv.h"
