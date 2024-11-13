@@ -7,13 +7,14 @@
 
 #include <Arduino.h>
 #include <sys/time.h>
-
-#include "esp_netif.h"
 #include "lwip/apps/sntp.h"
+#include <esp_netif.h>
 
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   #include "lwip/priv/tcpip_priv.h"
 #endif
+
+#include <string>
 
 #ifdef MYCILA_LOGGER_SUPPORT
   #include <MycilaLogger.h>
