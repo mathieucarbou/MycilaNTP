@@ -5,10 +5,10 @@
 #pragma once
 
 #include <Ticker.h>
-#include <WString.h>
 #include <time.h>
 
 #include <functional>
+#include <string>
 
 #ifdef MYCILA_JSON_SUPPORT
   #include <ArduinoJson.h>
@@ -30,7 +30,7 @@ namespace Mycila {
       bool setTimeZone(const char* timezone);
 
       // ge the timezone information used
-      const String& getTimezoneInfo() const { return _spec; }
+      const std::string& getTimezoneInfo() const { return _spec; }
 
       // sync with server
       bool sync(const char* server, const uint8_t retryInterval = MYCILA_NTP_RETRY_INTERVAL);
@@ -50,8 +50,8 @@ namespace Mycila {
 
     private:
       volatile bool _synced = false;
-      String _spec;
-      String _server;
+      std::string _spec;
+      std::string _server;
       Ticker _ticker;
   };
 

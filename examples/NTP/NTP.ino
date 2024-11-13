@@ -11,7 +11,7 @@ void setup() {
   Mycila::NTP.setTimeZone("Europe/Paris");
   Mycila::NTP.sync("pool.ntp.org");
 
-  Serial.println(Mycila::NTP.getTimezoneInfo());
+  Serial.println(Mycila::NTP.getTimezoneInfo().c_str());
 
   WiFi.begin("IoT");
 }

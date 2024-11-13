@@ -8,6 +8,9 @@
 #include <Arduino.h>
 #include <sys/time.h>
 
+#include "esp_netif.h"
+#include "lwip/apps/sntp.h"
+
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   #include "lwip/priv/tcpip_priv.h"
 #endif
@@ -50,7 +53,7 @@ bool Mycila::NTPClass::setTimeZone(const char* timezone) {
   }
 
   const char* start = found + len + 1;
-  _spec = String(start, static_cast<unsigned int>(strstr(start, "\n") - start));
+  _spec = std::string(start, static_cast<unsigned int>(strstr(start, "\n") - start));
 
   LOGI(TAG, "Set timezone to %s (%s)", timezone, _spec.c_str());
 
@@ -67,19 +70,26 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   _server = server;
   _ticker.detach();
 
+  esp_netif_init();
+  if (sntp_enabled()) {
+    sntp_stop();
+  }
+
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   if (!sys_thread_tcpip(LWIP_CORE_LOCK_QUERY_HOLDER))
     LOCK_TCPIP_CORE();
 #endif
 
-  configTime(0, 0, _server.c_str());
+  sntp_setoperatingmode(SNTP_OPMODE_POLL);
+  sntp_setservername(0, _server.c_str());
+  sntp_init();
 
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   if (sys_thread_tcpip(LWIP_CORE_LOCK_QUERY_HOLDER))
     UNLOCK_TCPIP_CORE();
 #endif
 
-  if (!_spec.isEmpty()) {
+  if (!_spec.empty()) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();
   }
@@ -113,7 +123,7 @@ bool Mycila::NTPClass::sync(const timeval& tv) {
   _ticker.detach();
 
   settimeofday(&tv, nullptr);
-  if (!_spec.isEmpty()) {
+  if (!_spec.empty()) {
     setenv("TZ", _spec.c_str(), 1);
     tzset();
   }
@@ -134,10 +144,10 @@ void Mycila::NTPClass::timezonesToJsonObject(const JsonObject& doc) const {
   char* start = const_cast<char*>(MYCILA_NTP_SPEC);
   char* token = strstr(start, "=");
   while (token != nullptr) {
-    const String timezone = String(start, static_cast<size_t>(token - start));
+    const std::string timezone(start, static_cast<size_t>(token - start));
     start = token + 1;
     token = strstr(start, "\n");
-    const String spec = String(start, static_cast<size_t>(token - start));
+    const std::string spec(start, static_cast<size_t>(token - start));
     start = token + 1;
     token = strstr(start, "=");
     doc[timezone] = spec;
@@ -148,7 +158,7 @@ void Mycila::NTPClass::timezonesToJsonArray(const JsonArray& doc) const {
   char* start = const_cast<char*>(MYCILA_NTP_SPEC);
   char* token = strstr(start, "=");
   while (token != nullptr) {
-    doc.add(String(start, static_cast<size_t>(token - start)));
+    doc.add(std::string(start, static_cast<size_t>(token - start)));
     token = strstr(token + 1, "\n");
     start = token + 1;
     token = strstr(start, "=");
