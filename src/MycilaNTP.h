@@ -20,7 +20,7 @@
 #define MYCILA_NTP_VERSION_REVISION 2
 
 #ifndef MYCILA_NTP_RETRY_INTERVAL
-  #define MYCILA_NTP_RETRY_INTERVAL 2
+  #define MYCILA_NTP_RETRY_INTERVAL 1
 #endif
 
 namespace Mycila {

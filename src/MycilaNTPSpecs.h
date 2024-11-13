@@ -4,9 +4,7 @@
  */
 #pragma once
 
-#include <Arduino.h>
-
-static const char MYCILA_NTP_SPEC[] PROGMEM = {
+static const char* MYCILA_NTP_SPEC = {
   "Africa/Abidjan=GMT0\n"
   "Africa/Accra=GMT0\n"
   "Africa/Addis_Ababa=EAT-3\n"

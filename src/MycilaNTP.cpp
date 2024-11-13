@@ -5,10 +5,10 @@
 #include <MycilaNTP.h>
 #include <MycilaNTPSpecs.h>
 
-#include <Arduino.h>
-
+#include <esp32-hal-log.h>
 #include <esp_netif.h>
 #include <sys/time.h>
+#include <time.h>
 
 #include "lwip/apps/sntp.h"
 
@@ -33,6 +33,13 @@ extern Mycila::Logger logger;
 #endif
 
 #define TAG "NTP"
+
+static inline bool isTimeUpdated(struct tm* info) {
+  time_t now;
+  time(&now);
+  localtime_r(&now, info);
+  return info->tm_year > (2016 - 1900);
+}
 
 bool Mycila::NTPClass::setTimeZone(const char* timezone) {
   if (!timezone)
@@ -98,7 +105,7 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   }
 
   struct tm timeInfo;
-  getLocalTime(&timeInfo, 5);
+  isTimeUpdated(&timeInfo);
 
   if (!_synced) {
     LOGI(TAG, "Syncing time with %s", _server.c_str());
@@ -108,7 +115,7 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
         // Serial.println("NTP Tick");
         if (!instance->_synced) {
           struct tm timeInfo;
-          if (getLocalTime(&timeInfo, 5)) {
+          if (isTimeUpdated(&timeInfo)) {
             instance->_synced = true;
             instance->_ticker.detach();
           }
@@ -134,7 +141,7 @@ bool Mycila::NTPClass::sync(const timeval& tv) {
   LOGI(TAG, "Time synced manually");
 
   struct tm timeInfo;
-  if (getLocalTime(&timeInfo, 5)) {
+  if (isTimeUpdated(&timeInfo)) {
     _synced = true;
     return true;
   }
