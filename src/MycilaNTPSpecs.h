@@ -4,6 +4,9 @@
  */
 #pragma once
 
+// related projects:
+// - https://github.com/rzeldent/micro-timezonedb
+// - https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 static const char* MYCILA_NTP_SPEC = {
   "Africa/Abidjan=GMT0\n"
   "Africa/Accra=GMT0\n"
