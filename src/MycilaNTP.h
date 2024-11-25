@@ -14,10 +14,10 @@
   #include <ArduinoJson.h>
 #endif
 
-#define MYCILA_NTP_VERSION          "6.0.3"
+#define MYCILA_NTP_VERSION          "6.0.4"
 #define MYCILA_NTP_VERSION_MAJOR    6
 #define MYCILA_NTP_VERSION_MINOR    0
-#define MYCILA_NTP_VERSION_REVISION 3
+#define MYCILA_NTP_VERSION_REVISION 4
 
 #ifndef MYCILA_NTP_RETRY_INTERVAL
   #define MYCILA_NTP_RETRY_INTERVAL 1
