@@ -7,8 +7,6 @@
 
 #include <esp32-hal-log.h>
 #include <esp_netif.h>
-#include <sys/time.h>
-#include <time.h>
 
 #include "lwip/apps/sntp.h"
 

@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <HardwareSerial.h>
 #include <MycilaNTP.h>
 #include <WiFi.h>

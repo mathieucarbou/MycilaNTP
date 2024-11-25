@@ -5,7 +5,7 @@
 #pragma once
 
 #include <Ticker.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include <functional>
 #include <string>
