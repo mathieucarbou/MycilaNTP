@@ -1,6 +1,6 @@
 {
   "name": "MycilaNTP",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "description": "A simple and efficient NTP library for ESP32 / Arduino",
   "homepage": "https://github.com/mathieucarbou/MycilaNTP",
   "repository": {
