@@ -79,14 +79,15 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   _ticker.detach();
 
   esp_netif_init();
-  if (sntp_enabled()) {
-    sntp_stop();
-  }
 
 #ifdef CONFIG_LWIP_TCPIP_CORE_LOCKING
   if (!sys_thread_tcpip(LWIP_CORE_LOCK_QUERY_HOLDER))
     LOCK_TCPIP_CORE();
 #endif
+
+  if (sntp_enabled()) {
+    sntp_stop();
+  }
 
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
   sntp_setservername(0, _server.c_str());
