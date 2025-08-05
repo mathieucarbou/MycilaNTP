@@ -98,6 +98,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade platformio
+          pip install --upgrade intelhex
       
       - run: PLATFORMIO_SRC_DIR=examples/NTP PIO_BOARD=${{ matrix.board }} pio run -e ${{ matrix.env }}
       - run: PLATFORMIO_BUILD_FLAGS="-DMYCILA_JSON_SUPPORT" PLATFORMIO_SRC_DIR=examples/TimezoneToJson PIO_BOARD=${{ matrix.board }} pio run -e ${{ matrix.env }}
