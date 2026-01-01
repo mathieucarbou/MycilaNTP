@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /*
- * Copyright (C) 2023-2025 Mathieu Carbou
+ * Copyright (C) Mathieu Carbou
  */
 #include <MycilaNTP.h>
 #include <MycilaNTPSpecs.h>
