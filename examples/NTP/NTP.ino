@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+/*
+ * Copyright (C) Mathieu Carbou
+ */
 #include <HardwareSerial.h>
 #include <MycilaNTP.h>
 #include <WiFi.h>
