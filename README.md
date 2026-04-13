@@ -8,7 +8,7 @@
 
 [![Build](https://github.com/mathieucarbou/MycilaNTP/actions/workflows/ci.yml/badge.svg)](https://github.com/mathieucarbou/MycilaNTP/actions/workflows/ci.yml)
 [![GitHub latest commit](https://badgen.net/github/last-commit/mathieucarbou/MycilaNTP)](https://GitHub.com/mathieucarbou/MycilaNTP/commit/)
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/mathieucarbou/MycilaNTP)
+[![Build with Ona](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/mathieucarbou/MycilaNTP)
 
 A simple and efficient NTP library for ESP32 / Arduino
 
