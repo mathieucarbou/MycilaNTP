@@ -16,22 +16,6 @@
 
 #include <string>
 
-#ifdef MYCILA_LOGGER_SUPPORT
-  #include <MycilaLogger.h>
-extern Mycila::Logger logger;
-  #define LOGD(tag, format, ...) logger.debug(tag, format, ##__VA_ARGS__)
-  #define LOGI(tag, format, ...) logger.info(tag, format, ##__VA_ARGS__)
-  #define LOGW(tag, format, ...) logger.warn(tag, format, ##__VA_ARGS__)
-  #define LOGE(tag, format, ...) logger.error(tag, format, ##__VA_ARGS__)
-#else
-  #define LOGD(tag, format, ...) ESP_LOGD(tag, format, ##__VA_ARGS__)
-  #define LOGI(tag, format, ...) ESP_LOGI(tag, format, ##__VA_ARGS__)
-  #define LOGW(tag, format, ...) ESP_LOGW(tag, format, ##__VA_ARGS__)
-  #define LOGE(tag, format, ...) ESP_LOGE(tag, format, ##__VA_ARGS__)
-#endif
-
-#define TAG "NTP"
-
 static inline bool isTimeUpdated(struct tm* info) {
   time_t now;
   time(&now);
@@ -56,14 +40,14 @@ bool Mycila::NTPClass::setTimeZone(const char* timezone) {
   delete[] withEqual;
 
   if (found == nullptr) {
-    LOGE(TAG, "Timezone not found: %s", timezone);
+    ESP_LOGE("NTP", "Timezone not found: %s", timezone);
     return false;
   }
 
   const char* start = found + len + 1;
   _spec = std::string(start, static_cast<unsigned int>(strstr(start, "\n") - start));
 
-  LOGI(TAG, "Set timezone to %s (%s)", timezone, _spec.c_str());
+  ESP_LOGI("NTP", "Set timezone to %s (%s)", timezone, _spec.c_str());
 
   setenv("TZ", _spec.c_str(), 1);
   tzset();
@@ -107,7 +91,7 @@ bool Mycila::NTPClass::sync(const char* server, const uint8_t retryInterval) {
   isTimeUpdated(&timeInfo);
 
   if (!_synced) {
-    LOGI(TAG, "Syncing time with %s", _server.c_str());
+    ESP_LOGI("NTP", "Syncing time with %s", _server.c_str());
     _ticker.attach(
       retryInterval,
       +[](NTPClass* instance) {
@@ -137,7 +121,7 @@ bool Mycila::NTPClass::sync(const timeval& tv) {
     tzset();
   }
 
-  LOGI(TAG, "Time synced manually");
+  ESP_LOGI("NTP", "Time synced manually");
 
   struct tm timeInfo;
   if (isTimeUpdated(&timeInfo)) {
